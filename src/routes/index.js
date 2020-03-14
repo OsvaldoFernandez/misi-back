@@ -1,9 +1,10 @@
 var express = require('express');
 var router = express.Router();
 
-/* GET users listing. */
+
 router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+  let title = 'MISI BACKEND';
+  res.render('index', { title: title });
 });
 
 module.exports = router;
