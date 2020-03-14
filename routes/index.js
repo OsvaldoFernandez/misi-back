@@ -1,59 +1,25 @@
 var express = require('express');
 var router = express.Router();
-const { google } = require('googleapis');
-const scopes = 'https://www.googleapis.com/auth/analytics.readonly';
-require('dotenv').config()
-const jwt = new google.auth.JWT(process.env.CLIENT_EMAIL, null, process.env.PRIVATE_KEY, scopes)
+//const Sequelize = require('sequelize');
 
-
-async function getData(jwt) {
-  const response = await google.analytics('v3').management.accounts.list({'auth': jwt });
-  const result = { accountID: response.data.items[0].id };
-  return await getProperties(jwt, result);
-};
-
-async function getProperties(jwt, result) {
-  const response = await google.analytics('v3').management.webproperties.list({
-    'auth': jwt,
-    'accountId': result.accountID
-  });
-  result.propertyID = response.data.items[0].id;
-  return await getProfiles(jwt, result);
-}
-
-async function getProfiles(jwt, result) {
-  const response = await google.analytics('v3').management.profiles.list({
-    'auth': jwt,
-    'accountId': result.accountID,
-    'webPropertyId': result.propertyID
-  });
-  result.profileID = response.data.items[0].id;
-  return await getReports(jwt, result);
-};
-
-async function getReports(jwt, result) {
-  const response = await google.analytics('v3').data.ga.get({
-    'auth': jwt,
-    'ids': 'ga:' + result.profileID,
-    'start-date': '7daysAgo',
-    'end-date': 'today',
-    'metrics': 'ga:sessions'
-  });
-  result.report = response.data;
-  return result;
-};
-
-/* GET home page. */
 router.get('/', function(req, res, next) {
   let title = 'MISI BACKEND';
+  //database();
 
-  jwt.authorize().then(() => {
-    getData(jwt).then((resp) => {
-
-      res.render('index', { title: title, result: JSON.stringify(resp, null, 2) });
-    });
-  });
-
+  res.render('index', { title: title });
 });
 
 module.exports = router;
+
+
+// const database = () => {
+//   // TODO: Connection pool
+//   const sequelize = new Sequelize('postgres://osvaldo:@localhost:5432/misi');
+//   sequelize.authenticate()
+//     .then(() => {
+//       console.log('Connection has been established successfully.');
+//     })
+//     .catch(err => {
+//       console.error('Unable to connect to the database:', err);
+//     });
+// }
