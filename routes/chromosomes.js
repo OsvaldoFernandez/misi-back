@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
-var Chromosome = require('../../src/models/chromosome');
+const models = require('../models');
+var Chromosome = models.Chromosome;
 
 
 router.get('/', function(req, res, next) {

@@ -3,14 +3,16 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var indexRouter = require('./src/routes/index');
-var resultsRouter = require('./src/routes/results');
-var chromosomesRouter = require('./src/routes/chromosomes');
+var indexRouter = require('./routes/index');
+var resultsRouter = require('./routes/results');
+var chromosomesRouter = require('./routes/chromosomes');
+var palettesRouter = require('./routes/palettes');
+const cors = require('cors');
 
 var app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'src/views'));
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 app.use(logger('dev'));
@@ -19,9 +21,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+// use it before all route definitions
+app.use(cors({origin: 'http://localhost:3000'}));
+
 app.use('/', indexRouter);
 app.use('/results', resultsRouter);
 app.use('/chromosomes', chromosomesRouter);
+app.use('/palettes', palettesRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -37,6 +44,7 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
+
 });
 
 module.exports = app;
