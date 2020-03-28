@@ -6,9 +6,7 @@ const models = require('../models');
 const Chromosome = models.Chromosome;
 const Project = models.Project;
 
-const createPalette = async (project) => {
-
-  //const palettes = await Palette.findAll({where: {projectId: project.id }});
+const randomPalette = (project) => {
   return project.palettes[Math.floor(Math.random() * project.palettes.length)]; //choosing random palette
 };
 
@@ -28,17 +26,15 @@ router.post('/', function(req, res, next) {
 });
 
 router.post('/bulk_create', async function(req, res, next) {
-  console.log('INICIA');
   await Project.sync();
   const project = (await Project.findAll({where: {id: req.query.project_id }, include: ['palettes']}))[0];
-  console.log('PROJECT');
-  console.log(project);
   if (!project) {
     next(createError(404));
   }
 
   Chromosome.sync().then(async () => {
-    await Chromosome.create({ projectId: project.id, palette: createPalette(project), elements: randomizer(project) });
+    const newChro = await Chromosome.create({ projectId: project.id, elements: randomizer(project) });
+    await randomPalette(project).setChromosome(newChro);
 
     const chromosomes = await Chromosome.findAll({where: {projectId: project.id }});
     res.send(JSON.stringify({count: chromosomes.length }));

@@ -7,6 +7,7 @@ var indexRouter = require('./routes/index');
 var resultsRouter = require('./routes/results');
 var chromosomesRouter = require('./routes/chromosomes');
 var palettesRouter = require('./routes/palettes');
+var projectsRouter = require('./routes/projects');
 const cors = require('cors');
 
 var app = express();
@@ -29,6 +30,7 @@ app.use('/', indexRouter);
 app.use('/results', resultsRouter);
 app.use('/chromosomes', chromosomesRouter);
 app.use('/palettes', palettesRouter);
+app.use('/projects', projectsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
