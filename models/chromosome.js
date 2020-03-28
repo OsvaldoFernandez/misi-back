@@ -6,6 +6,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   Chromosome.associate = function(models) {
     Chromosome.hasOne(models.Palette, {as: 'palette'})
+    Chromosome.belongsTo(models.Project, {foreignKey: 'projectId', as: 'project'});
   };
   return Chromosome;
 };
