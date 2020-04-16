@@ -3,6 +3,8 @@ var router = express.Router();
 const { google } = require('googleapis');
 const scopes = 'https://www.googleapis.com/auth/analytics.readonly';
 require('dotenv').config()
+
+// TODO: Get this from project, not ENV.
 const jwt = new google.auth.JWT(process.env.CLIENT_EMAIL, null, process.env.PRIVATE_KEY, scopes)
 
 
