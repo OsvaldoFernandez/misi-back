@@ -66,8 +66,8 @@ router.post('/:id/init', async function(req, res, next) {
   const project = (await Project.findAll({where: { id: req.params.id }, include: ['palettes', 'chromosomes']}))[0];
 
   // CREATE BASE CHROMOSOME AND PALETTE
-  //const baseChromosome = await (Chromosome.create({trackingId: project.trackingIds[0], elements: project.elements, projectId: project.id }));
-  //await Palette.create({baseColor: project.baseColors[0], colors: project.baseColors, projectId: project.id, chromosomeId: baseChromosome.id });
+  const baseChromosome = await (Chromosome.create({trackingId: project.trackingIds[0], elements: project.elements, projectId: project.id }));
+  await Palette.create({baseColor: project.baseColors[0], colors: project.baseColors, projectId: project.id, chromosomeId: baseChromosome.id });
 
   // CREATE THE REST OF THE FIRST GENERATION
   await project.freeTrackingIds().forEach(async (trackingId) => {

@@ -44,6 +44,8 @@ const getPalettes = (baseColors) => {
   });
 }
 
+// TODO: New file for distance VS parser
+
 function hexToHSL(H) {
   // Convert hex to RGB first
   let r = 0, g = 0, b = 0;

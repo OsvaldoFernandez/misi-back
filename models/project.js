@@ -26,7 +26,5 @@ module.exports = (sequelize, DataTypes) => {
     );
   };
 
-  // PROJECT RETURN FREE TRACKING ID
-
   return Project;
 };
