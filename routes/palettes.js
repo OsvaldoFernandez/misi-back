@@ -10,7 +10,7 @@ router.post('/bulk_create', async function(req, res, next) {
   if ((await Project.count()) === 0 ) {
     await Project.create({name: 'exampleProject'});
   }
-  const project = (await Project.findAll())[0]
+  const project = (await Project.findAll())[0];
 
   Palette.sync().then(async () => {
     JSON.parse(req.body.palettes).forEach(async (palette) => {
