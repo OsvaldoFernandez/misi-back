@@ -49,4 +49,7 @@ app.use(function(err, req, res, next) {
 
 });
 
+app.set('port', '8081');
+app.listen(8081);
+
 module.exports = app;
