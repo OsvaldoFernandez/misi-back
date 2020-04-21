@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const models = require('../models');
-const Project = models.Project;
+const Palette = models.Palette;
 
 router.get('/', function(req, res, next) {
   Palette.findAll().then(palettes => {

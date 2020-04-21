@@ -69,15 +69,16 @@ router.post('/:id/init', async function(req, res, next) {
   const baseChromosome = await (Chromosome.create({trackingId: project.trackingIds[0], elements: project.elements, projectId: project.id }));
   await Palette.create({baseColor: project.baseColors[0], colors: project.baseColors, projectId: project.id, chromosomeId: baseChromosome.id });
 
+  const freeTrackingIds = await project.freeTrackingIds();
   // CREATE THE REST OF THE FIRST GENERATION
-  await project.freeTrackingIds().forEach(async (trackingId) => {
-    const availablePalettes = project.palettes.filter((palette) => (palette.offlineAptitude(project) > 0 && !palette.chromosomeId));
-    const randomPalette = availablePalettes[Math.floor(Math.random() * availablePalettes.length)];
-
+  for (const trackingId of freeTrackingIds) {
+    const availablePalettes = await Palette.findAll({where: {projectId: project.id, chromosomeId: null}});
+    const approvedPalettes = availablePalettes.filter((palette) => palette.offlineAptitude(project) > 0);
+    const randomPalette = approvedPalettes[Math.floor(Math.random() * approvedPalettes.length)];
     const chromosome = await Chromosome.create({ projectId: project.id, elements: randomizer(project), trackingId: trackingId });
     randomPalette.chromosomeId = chromosome.id;
     await randomPalette.save();
-  });
+  };
 
   res.end(JSON.stringify(project, null, 4));
 });

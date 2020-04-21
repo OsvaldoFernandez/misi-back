@@ -17,10 +17,10 @@ module.exports = (sequelize, DataTypes) => {
     return _.maxBy(this.chromosomes, 'generation').generation;
   };
 
-  Project.prototype.freeTrackingIds = function () {
-
+  Project.prototype.freeTrackingIds = async function () {
+    const chromos = (await this.reload()).chromosomes;
     return this.trackingIds.filter((trackingId) =>
-      this.chromosomes.filter((chromosome) =>
+      chromos.filter((chromosome) =>
         chromosome.generation === this.currentGeneration() && chromosome.trackingId === trackingId
       ).length === 0
     );

@@ -16,6 +16,8 @@ config/secrets.qa.js
 config/secrets.development.js
 config/secrets.staging.js
 config/secrets.production.js
+config/config.json
+
 .env
 cert.json
 
@@ -42,3 +44,8 @@ backstop_data
 
 #IDE files
 .vscode
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
