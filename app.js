@@ -24,7 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 // use it before all route definitions
-app.use(cors({origin: 'http://localhost:3000'}));
+app.use(cors({origin: ['http://misi-landing.s3-website-us-west-2.amazonaws.com', 'http://localhost:3000']}));
 
 app.use('/', indexRouter);
 app.use('/results', resultsRouter);
