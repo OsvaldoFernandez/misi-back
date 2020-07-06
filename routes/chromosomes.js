@@ -5,6 +5,7 @@ var _ = require('lodash');
 const models = require('../models');
 const Chromosome = models.Chromosome;
 const Project = models.Project;
+const analytics = require('../interactors/analytics');
 
 router.get('/', function(req, res, next) {
   Chromosome.findAll().then(chromosomes => {
@@ -25,10 +26,21 @@ router.get('/request', async function(req, res, next) {
   res.send(JSON.stringify(result));
 });
 
-// GET CHROMSOME BY TRACKING ID
-router.get('/:trackingId', function(req, res, next) {
-  Chromosome.findAll({ where: { trackingId: req.params.trackingId }, include: ['palette']}).then(chromosomes => {
+// GET CHROMSOME BY ID
+router.get('/:id', function(req, res, next) {
+  Chromosome.findAll({ where: { id: req.params.id }, include: ['palette']}).then(chromosomes => {
     res.end(JSON.stringify(chromosomes[0], null, 4));
+  });
+});
+
+// GET RESULTS
+
+router.post('/:id/results', function(req, res, next) {
+  Chromosome.findAll({ where: { id: req.params.id }}).then(chromosomes => {
+    const chromosome = chromosomes[0];
+    analytics.getResults(chromosome).then((resp) => {
+      res.end(JSON.stringify(resp, null, 4));
+    });
   });
 });
 

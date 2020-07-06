@@ -8,6 +8,7 @@
     "debug": "node --nolazy --inspect-brk=9229 ./bin/www"
   },
   "dependencies": {
+    "acorn": ">=5.7.4",
     "axios": "^0.19.2",
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
@@ -21,7 +22,7 @@
     "pg": "^7.18.2",
     "pg-hstore": "^2.3.3",
     "pug": "^2.0.4",
-    "acorn": ">=5.7.4"
+    "moment": "^2.27.0"
   },
   "devDependencies": {
     "jest": "^25.1.0",

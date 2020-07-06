@@ -4,7 +4,6 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var indexRouter = require('./routes/index');
-var resultsRouter = require('./routes/results');
 var chromosomesRouter = require('./routes/chromosomes');
 var palettesRouter = require('./routes/palettes');
 var projectsRouter = require('./routes/projects');
@@ -27,7 +26,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors({origin: ['http://misi-landing.s3-website-us-west-2.amazonaws.com', 'http://localhost:3000']}));
 
 app.use('/', indexRouter);
-app.use('/results', resultsRouter);
 app.use('/chromosomes', chromosomesRouter);
 app.use('/palettes', palettesRouter);
 app.use('/projects', projectsRouter);
