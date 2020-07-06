@@ -33,7 +33,7 @@ router.get('/:id', function(req, res, next) {
   });
 });
 
-// GET RESULTS
+// REQEUST RESULTS
 
 router.post('/:id/results', function(req, res, next) {
   Chromosome.findAll({ where: { id: req.params.id }}).then(chromosomes => {

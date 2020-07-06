@@ -3,16 +3,16 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var indexRouter = require('./routes/index');
-var chromosomesRouter = require('./routes/chromosomes');
-var palettesRouter = require('./routes/palettes');
-var projectsRouter = require('./routes/projects');
+var indexRouter = require('./src/routes/index');
+var chromosomesRouter = require('./src/routes/chromosomes');
+var palettesRouter = require('./src/routes/palettes');
+var projectsRouter = require('./src/routes/projects');
 const cors = require('cors');
 
 var app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, 'src/views'));
 app.set('view engine', 'pug');
 
 app.use(logger('dev'));
