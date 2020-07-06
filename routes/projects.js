@@ -65,6 +65,8 @@ router.post('/:id/baseColors', async function(req, res, next) {
 router.post('/:id/init', async function(req, res, next) {
   const project = (await Project.findAll({where: { id: req.params.id }, include: ['palettes', 'chromosomes']}))[0];
 
+  //TODO: SAVE TIMEFROM AND TIMETO
+
   // CREATE BASE CHROMOSOME AND PALETTE
   const baseChromosome = await (Chromosome.create({trackingId: project.trackingIds[0], elements: project.elements, projectId: project.id }));
   await Palette.create({baseColor: project.baseColors[0], colors: project.baseColors, projectId: project.id, chromosomeId: baseChromosome.id });

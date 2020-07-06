@@ -4,6 +4,9 @@ module.exports = (sequelize, DataTypes) => {
   const Chromosome = sequelize.define('Chromosome', {
     trackingId: DataTypes.STRING,
     elements: DataTypes.JSONB,
+    timeFrom: DataTypes.DATE,
+    timeTo: DataTypes.DATE,
+    results: DataTypes.JSONB,
     timesRequested: {
       type: DataTypes.INTEGER,
       allowNull: false,
