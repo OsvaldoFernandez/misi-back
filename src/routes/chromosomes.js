@@ -33,6 +33,16 @@ router.get('/:id', function(req, res, next) {
   });
 });
 
+// GET CHROMSOME SCORE BY ID
+router.get('/:id/score', function(req, res, next) {
+  Chromosome.findAll({ where: { id: req.params.id }}).then(chromosomes => {
+    chromosomes[0].onlineAptitude().then((score) => {
+      res.end(JSON.stringify({score: score}, null, 4));
+    });
+  });
+});
+
+
 // REQEUST RESULTS
 
 router.post('/:id/results', function(req, res, next) {

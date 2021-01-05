@@ -33,6 +33,10 @@ Object.keys(db).forEach(modelName => {
   db[modelName].last = async () => {
     return (await db[modelName].findAll({limit: 1, order: [[ 'createdAt', 'DESC' ]]}))[0];
   };
+
+  db[modelName].find = (id) => {
+    return db[modelName].findAll({where: {id: id}, limit: 1}).then((resp) => resp[0]);
+  }
 });
 
 db.sequelize = sequelize;
