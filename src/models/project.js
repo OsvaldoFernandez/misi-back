@@ -6,7 +6,8 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     elements: DataTypes.JSONB,
     baseColors: DataTypes.ARRAY(DataTypes.STRING),
-    trackingIds: DataTypes.ARRAY(DataTypes.STRING)
+    trackingIds: DataTypes.ARRAY(DataTypes.STRING),
+    baseStyles: DataTypes.JSONB
   }, {});
   Project.associate = function(models) {
     Project.hasMany(models.Palette, {as: 'palettes', foreignKey: 'projectId'});

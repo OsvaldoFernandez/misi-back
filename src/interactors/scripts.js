@@ -144,6 +144,44 @@ const getChromoByGenes = (genes, projectId) => {
   return result;
 };
 
+const recursiveCrossover = (remaining, proj, currentGen) => {
+  if (remaining.length) {
+    const x = remaining[0];
+    const y = remaining[1];
+    const xGen = proj.chromosomes.filter((chro) => chro.id === x.id)[0].toGenes();
+    const yGen = proj.chromosomes.filter((chro) => chro.id === y.id)[0].toGenes();
+    const bitString = Object.keys(xGen).map((key) => { return { key: key, bit: Math.floor(Math.random() * 2)}});
+    const xChild = {};
+    const yChild = {};
+    bitString.forEach((elem) => {
+      if (elem.bit) {
+        xChild[elem.key] = xGen[elem.key];
+        yChild[elem.key] = yGen[elem.key];
+      } else {
+        yChild[elem.key] = xGen[elem.key];
+        xChild[elem.key] = yGen[elem.key];
+      }
+    });
+    const xChromo = Chromosome.build(getChromoByGenes(xChild, proj.id));
+    const yChromo = Chromosome.build(getChromoByGenes(yChild, proj.id));
+    xChromo.offlineAptitude().then((score1) => {
+      yChromo.offlineAptitude().then((score2) => {
+        if ((score1 > 0) && (score2 > 0)) {
+          console.log(`crossed ${x.id} with ${y.id}`);
+          xChromo.generation = currentGen;
+          yChromo.generation = currentGen;
+          remaining.shift();
+          remaining.shift();
+          xChromo.save();
+          yChromo.save();
+          recursiveCrossover(remaining, proj, currentGen);
+        } else {
+          recursiveCrossover(remaining, proj, currentGen);
+        }
+      });
+    });
+  }
+};
 
 const crossover = (id) => {
   return getRankingScores(id).then((resp) => { // It could be roulette
@@ -162,46 +200,80 @@ const crossover = (id) => {
       candidate.copies --;
     };
 
-    console.log('CROSSOVER');
-    console.log(crossover);
-    console.log('AS IS');
-    console.log(asIs);
-
     return Project.findAll({where: { id: id }, include: ['chromosomes']}).then((projects) => {
       const proj = projects[0];
       const currentGen = proj.currentGeneration() + 1;
       asIs.map((result) => Chromosome.find(result.id).then((chromo) => {
+        console.log(`kept ${chromo.id}`);
         chromo.generation = currentGen;
-        console.log('AS IS');
-        console.log(chromo);
-        //chromo.save();
+        chromo.save();
       }));
       const shuffledCrossover = _.shuffle(crossover);
-      while (shuffledCrossover.length) {
-        const x = shuffledCrossover.pop();
-        const y = shuffledCrossover.pop();
-        const xGen = proj.chromosomes.filter((chro) => chro.id === x.id)[0].toGenes();
-        const yGen = proj.chromosomes.filter((chro) => chro.id === y.id)[0].toGenes();
-        const bitString = Object.keys(xGen).map((key) => { return { key: key, bit: Math.floor(Math.random() * 2)}});
-        const xChild = {};
-        const yChild = {};
-        bitString.forEach((elem) => {
-          if (elem.bit) {
-            xChild[elem.key] = xGen[elem.key];
-            yChild[elem.key] = yGen[elem.key];
-          } else {
-            yChild[elem.key] = xGen[elem.key];
-            xChild[elem.key] = yGen[elem.key];
-          }
-        });
-        console.log(`CROSSED ${x.id}`);
-        console.log(getChromoByGenes(xChild, proj.id));
-        console.log(`CROSSED ${y.id}`);
-        console.log(getChromoByGenes(yChild, proj.id));
-        // TENGO QUE HACERLE OFFLINE A AMBOS DESDE UN CROMOSOMA BUILDEADO (.build). SI SE EXCEDE NO LO GUARDO Y NUEVAMENTE AL LOOP. 
-        //Chromosome.create(getChromoByGenes(xChild, proj.id));
-        //Chromosome.create(getChromoByGenes(yChild, proj.id));
-      };
+      recursiveCrossover(shuffledCrossover, proj, currentGen);
     })
   })
 };
+
+const recursiveMutation = (proj, chromo) => {
+  const gen = _.sample(Object.keys(chromo.toGenes()));
+  const elemType = gen.split('_')[0];
+  const elemIndex = gen.split('_')[1];
+  switch (elemType) {
+    case 'perm':
+      console.log(`CHROMO ${chromo.id} MUTA`);
+      console.log(`Permutacion: de ${chromo.elements[elemIndex]}`);
+      let newElements = chromo.elements;
+      newElements[elemIndex] = _.shuffle(chromo.elements[elemIndex]);
+      chromo.elements = newElements;
+      console.log(`A: ${newElements[elemIndex]}`)
+      chromo.save();
+      break;
+    case 'color':
+      Palette.findAll({where: { projectId: proj.id }}).then((palettes) => {
+        console.log(`CHROMO ${chromo.id} MUTA`);
+        console.log(`COLOR: de ${chromo.colors[elemIndex]}`);
+        let newColor = chromo.colors;
+        newPalette = _.sample(palettes.filter((palette) => palette.baseColor !== palette.colors[elemIndex]));
+        newColor[elemIndex] = newPalette.colors[elemIndex];
+        chromo.colors = newColor;
+        console.log(`A: ${newColor[elemIndex]}`);
+        chromo.offlineAptitude().then((score) => {
+          if (score > 0) {
+            chromo.save();
+          } else {
+            console.log(`CHROMO ${chromo.id} REPRUEBA OFFLINE`);
+            chromo.reload().then((newChromo) => {
+              recursiveMutation(proj, newChromo);
+            });
+          }
+        });
+      });
+      break;
+    case 'styling':
+      console.log(`CHROMO ${chromo.id} MUTA`);
+      console.log(`STYLING: de ${chromo.styling[elemIndex]}`);
+      let newStyling = chromo.styling;
+      newStyling[elemIndex] = _.sample(proj.baseStyles[elemIndex]);
+      chromo.styling = newStyling;
+      console.log(`A: ${newStyling[elemIndex]}`);
+      chromo.save();
+      break;
+    default:
+      console.log('ERROR');
+  }
+};
+
+const mutation = (id) => {
+  return Project.findAll({where: { id: id }, include: ['chromosomes']}).then((projects) => {
+    const proj = projects[0];
+    const currentGen = proj.currentGeneration();
+    const chromos = proj.chromosomes.filter((chromo) => chromo.generation === currentGen );
+    chromos.forEach((chromo) => {
+      if (Math.random() < 0.8) {
+        recursiveMutation(proj, chromo);
+      } else {
+        console.log(`CHROMO ${chromo.id} NO MUTA`);
+      };
+    });
+  })
+}
