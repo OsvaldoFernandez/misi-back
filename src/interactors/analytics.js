@@ -38,14 +38,14 @@ const getResults = (chromosome) => {
       return google.analytics('v3').data.ga.get(gaParams).then((response) => {
         return google.analytics('v3').data.ga.get(_.assign({ 'dimensions': 'ga:mobileDeviceInfo' }, gaParams)).then((mobileResponse) => {
           const result = {
-            conversions: response.data.totalsForAllResults['ga:goalStartsAll'],
-            conversionRate: response.data.totalsForAllResults['ga:goalConversionRateAll'],
-            sessions: response.data.totalsForAllResults['ga:sessions'],
-            avgSessionDuration: response.data.totalsForAllResults['ga:avgSessionDuration'],
-            users: response.data.totalsForAllResults['ga:users'],
-            sessionsPerUser: response.data.totalsForAllResults['ga:sessionsPerUser'],
-            bounceRate: response.data.totalsForAllResults['ga:bounceRate'],
-            mobileSessions: mobileResponse.data.totalsForAllResults['ga:sessions']
+            conversions: parseFloat(response.data.totalsForAllResults['ga:goalStartsAll']),
+            conversionRate: parseFloat(response.data.totalsForAllResults['ga:goalConversionRateAll']),
+            sessions: parseFloat(response.data.totalsForAllResults['ga:sessions']),
+            avgSessionDuration: parseFloat(response.data.totalsForAllResults['ga:avgSessionDuration']),
+            users: parseFloat(response.data.totalsForAllResults['ga:users']),
+            sessionsPerUser: parseFloat(response.data.totalsForAllResults['ga:sessionsPerUser']),
+            bounceRate: parseFloat(response.data.totalsForAllResults['ga:bounceRate']),
+            mobileSessions: parseFloat(mobileResponse.data.totalsForAllResults['ga:sessions'])
           };
           chromosome.results = result;
           return chromosome.save().then(() => {
