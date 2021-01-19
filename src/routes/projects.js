@@ -87,21 +87,6 @@ router.post('/:id/init', async function(req, res, next) {
 
 // ENDPOINT: WINNERS
 
-router.post('/:id/selection', async function(req, res, next) {
-  Project.findAll({where: { id: req.params.id }, include: ['palettes', 'chromosomes']}).then((projects) => {
-    const project = projects[0];
-    const currentGen = project.currentGeneration();
-    Chromosome.findAll({where: { projectId: project.id, generation: currentGen}}).then((chromos) => {
-      const scores = chromos.map((chromo) => {id: chromo.id, score: (await chromo.onlineAptitude())} );
-      console.log(score);
-      //const copias = (x) => 1.2 - (1.2 - 0.8) * (x - 1) / (10 - 1);
-    });
-
-  });
-
-  res.end(JSON.stringify(project, null, 4));
-});
-
 // ENDPOINT: CROSSOVER
 
 // ENDPOINT: MUTATION
