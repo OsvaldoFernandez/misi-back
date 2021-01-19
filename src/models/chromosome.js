@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
     timeFrom: DataTypes.DATE,
     timeTo: DataTypes.DATE,
     results: DataTypes.JSONB,
+    copiedFrom: DataTypes.INTEGER,
     timesRequested: {
       type: DataTypes.INTEGER,
       allowNull: false,

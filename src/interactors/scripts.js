@@ -109,7 +109,8 @@ const getRankingScores = (id) => {
         const results = _.sortBy(scores, ['score']).reverse().map((result, index) => {
           return {id: result.id, copies: Math.round(2 - 2 * (index) / (10 - 1))};
         });
-        console.log(results)
+        console.log('RESULTS');
+        console.log(results);
         return results;
       });
     });
@@ -205,8 +206,12 @@ const crossover = (id) => {
       const currentGen = proj.currentGeneration() + 1;
       asIs.map((result) => Chromosome.find(result.id).then((chromo) => {
         console.log(`kept ${chromo.id}`);
-        chromo.generation = currentGen;
-        chromo.save();
+
+        const newChromo = Chromosome.build(
+          { elements: chromo.elements, colors: chromo.colors, styling: chromo.styling,
+            projectId: chromo.projectId, copiedFrom: chromo.id, generation: currentGen }
+        );
+        newChromo.save();
       }));
       const shuffledCrossover = _.shuffle(crossover);
       recursiveCrossover(shuffledCrossover, proj, currentGen);
