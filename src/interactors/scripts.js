@@ -107,7 +107,7 @@ const getRankingScores = (id) => {
         )
       )).then((scores) => {
         const results = _.sortBy(scores, ['score']).reverse().map((result, index) => {
-          return {id: result.id, copies: Math.round(2 - 2 * (index) / (10 - 1))};
+          return {id: result.id, copies: Math.round(2 - 2 * (index) / (10 - 1)), score: result.score };
         });
         console.log('RESULTS');
         console.log(results);
@@ -168,13 +168,17 @@ const recursiveCrossover = (remaining, proj, currentGen) => {
     xChromo.offlineAptitude().then((score1) => {
       yChromo.offlineAptitude().then((score2) => {
         if ((score1 > 0) && (score2 > 0)) {
-          console.log(`crossed ${x.id} with ${y.id}`);
+
           xChromo.generation = currentGen;
           yChromo.generation = currentGen;
           remaining.shift();
           remaining.shift();
-          xChromo.save();
-          yChromo.save();
+          xChromo.save().then((chromo) => {
+            console.log(`crossed ${x.id} with ${y.id} and got ${chromo.id}`);
+          });
+          yChromo.save().then((chromo) => {
+            console.log(`crossed ${x.id} with ${y.id} and got ${chromo.id}`);
+          });
           recursiveCrossover(remaining, proj, currentGen);
         } else {
           recursiveCrossover(remaining, proj, currentGen);
@@ -274,7 +278,7 @@ const mutation = (id) => {
     const currentGen = proj.currentGeneration();
     const chromos = proj.chromosomes.filter((chromo) => chromo.generation === currentGen );
     chromos.forEach((chromo) => {
-      if (Math.random() < 0.8) {
+      if (Math.random() < 0.4) {
         recursiveMutation(proj, chromo);
       } else {
         console.log(`CHROMO ${chromo.id} NO MUTA`);

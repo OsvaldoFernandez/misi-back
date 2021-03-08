@@ -5,3 +5,4 @@ To start server:
 
 Remember to add Node path in your EB environment
 ``PATH=$PATH:`ls -td /opt/elasticbeanstalk/node-install/node-* | head -1`/bin``
+`NODE_ENV=production node`

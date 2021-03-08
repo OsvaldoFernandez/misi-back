@@ -28,7 +28,7 @@ router.get('/request', async function(req, res, next) {
 
 // GET CHROMSOME BY ID
 router.get('/:id', function(req, res, next) {
-  Chromosome.findAll({ where: { id: req.params.id }, include: ['palette']}).then(chromosomes => {
+  Chromosome.findAll({ where: { trackingId: req.params.id }}).then(chromosomes => {
     res.end(JSON.stringify(chromosomes[0], null, 4));
   });
 });
