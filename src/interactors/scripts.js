@@ -18,7 +18,7 @@ const editChromoSections = (chromoID, sections) => {
 };
 
 const editChromoResults = (chromoID, results) => {
-  return getChromo(chromoID).then((chromo) => {
+  return Chromosome.find(chromoID).then((chromo) => {
     chromo.results = results;
     chromo.save().then((resp) => { console.log(resp) });
   })

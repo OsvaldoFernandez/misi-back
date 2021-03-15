@@ -20,17 +20,17 @@ module.exports = (sequelize, DataTypes) => {
 
   // TODO: Sacar de params
   Project.prototype.kpis = {
-    sessions: 20,
-    bounceRate: 35,
-    seconds: 15,
-    convRate: 30
+    sessions: 0,
+    bounceRate: 30,
+    seconds: 0,
+    convRate: 70
   };
 
   Project.prototype.expectedKpis = {
     sessions: 1.2,
-    bounceRate: 0.50,
+    bounceRate: 0.65,
     seconds: 30,
-    convRate: 0.05
+    convRate: 0.1
   };
 
   Project.prototype.references = function () {
